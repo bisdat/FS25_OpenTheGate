@@ -1,6 +1,8 @@
--- Vehicle-train bounds, movement direction, and target geometry.
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
 
-local function debugLog(fmt, ...) OpenTheGateUtil.debugLog("VEHICLE", fmt, ...) end
+-- Vehicle-train bounds and movement direction.
+
 local validNode = OpenTheGateUtil.validNode
 
 local function projectOnAxis(rootX, rootZ, px, pz, fwdX, fwdZ)
@@ -73,17 +75,6 @@ function OpenTheGate:getVehicleCompositionBounds(vehicle)
 end
 
 
-local function getAnimationDirection(animatedObject)
-    if animatedObject == nil or animatedObject.animation == nil then
-        return 0
-    end
-    return tonumber(animatedObject.animation.direction) or 0
-end
-
-local function isGateMoving(animatedObject)
-    return getAnimationDirection(animatedObject) ~= 0 or animatedObject.isMoving == true
-end
-
 function OpenTheGate:getVehicleMovingDirection(vehicle)
     -- GIANTS vehicles normally expose movingDirection as 1 (forward),
     -- -1 (reverse), or 0 (stationary). Fall back to signed last speed where
@@ -100,37 +91,3 @@ function OpenTheGate:getVehicleMovingDirection(vehicle)
 
     return 0, "stationary"
 end
-
-local function planarDistance(x1, z1, x2, z2)
-    local dx, dz = x2 - x1, z2 - z1
-    return math.sqrt(dx * dx + dz * dz)
-end
-
-local function pointMetrics(gx, gz, px, pz, fx, fz)
-    local dx, dz = gx - px, gz - pz
-    local distance = math.sqrt(dx * dx + dz * dz)
-    if distance < 0.0001 then return distance, 1, 0, 0 end
-    local longitudinal = dx * fx + dz * fz
-    local lateral = math.abs(dx * (-fz) + dz * fx)
-    local dot = longitudinal / distance
-    return distance, dot, lateral, longitudinal
-end
-
-function OpenTheGate:getVehiclePose(vehicle)
-    local node = vehicle.rootNode
-    if vehicle.components ~= nil and vehicle.components[1] ~= nil then
-        node = vehicle.components[1].node or node
-    end
-    if not validNode(node) then
-        return nil
-    end
-
-    local x, y, z = getWorldTranslation(node)
-    local fx, _, fz = localDirectionToWorld(node, 0, 0, 1)
-    local length = math.sqrt(fx * fx + fz * fz)
-    if length > 0.0001 then
-        fx, fz = fx / length, fz / length
-    end
-    return x, y, z, fx, fz
-end
-

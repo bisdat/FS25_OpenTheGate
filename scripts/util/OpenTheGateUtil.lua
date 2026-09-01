@@ -1,4 +1,7 @@
--- FS25_openTheGate shared utility helpers.
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
+
+-- FS25_OpenTheGate shared utility helpers.
 
 OpenTheGateUtil = OpenTheGateUtil or {}
 
@@ -26,7 +29,7 @@ function OpenTheGateUtil.debugLog(category, fmt, ...)
         return
     end
 
-    Logging.info("[FS25_openTheGate][DEBUG][%s] " .. tostring(fmt), tostring(category), ...)
+    Logging.info("[FS25_OpenTheGate][DEBUG][%s] " .. tostring(fmt), tostring(category), ...)
 end
 
 function OpenTheGateUtil.boolText(value)
@@ -36,7 +39,16 @@ end
 
 function OpenTheGateUtil.vehicleText(vehicle)
     if vehicle == nil then return "nil" end
-    return string.format("%s (%s)", tostring(vehicle.getName ~= nil and vehicle:getName() or vehicle.configFileName or "unnamed"), tostring(vehicle))
+
+    local name = vehicle.configFileName or "unnamed"
+    if vehicle.getName ~= nil then
+        local ok, value = pcall(vehicle.getName, vehicle)
+        if ok and value ~= nil then
+            name = value
+        end
+    end
+
+    return string.format("%s (%s)", tostring(name), tostring(vehicle))
 end
 
 function OpenTheGateUtil.getTimeMs()
@@ -46,10 +58,6 @@ end
 
 function OpenTheGateUtil.validNode(node)
     return node ~= nil and node ~= 0 and entityExists(node)
-end
-
-function OpenTheGateUtil.lower(value)
-    return string.lower(tostring(value or ""))
 end
 
 function OpenTheGateUtil.getNodeNameSafe(node)

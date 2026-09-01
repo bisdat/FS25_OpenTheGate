@@ -1,90 +1,45 @@
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
+
 -- Animated entrance discovery, validation, and operation.
 
 local function debugLog(fmt, ...) OpenTheGateUtil.debugLog("GATES", fmt, ...) end
 local boolText = OpenTheGateUtil.boolText
-local getTimeMs = OpenTheGateUtil.getTimeMs
 local validNode = OpenTheGateUtil.validNode
-local lower = OpenTheGateUtil.lower
 local getNodeNameSafe = OpenTheGateUtil.getNodeNameSafe
 
-function OpenTheGate:updateForcedGateAnimations(dt)
-    if self.activeGateAnimations == nil then
-        return
-    end
-
-    local now = getTimeMs()
-    for animatedObject, job in pairs(self.activeGateAnimations) do
-        local animation = animatedObject ~= nil and animatedObject.animation or nil
-        if animation == nil or animatedObject.setAnimTime == nil then
-            debugLog("FORCED DRIVER cancelled: invalid object=%s animation=%s setAnimTime=%s", tostring(animatedObject), tostring(animation), tostring(animatedObject ~= nil and animatedObject.setAnimTime or nil))
-            self.activeGateAnimations[animatedObject] = nil
-        else
-            local current = tonumber(animation.time) or 0
-            local duration = math.max(tonumber(animation.duration) or 1000, 1)
-            local step = dt / duration
-            local nextTime
-
-            if job.target > current then
-                nextTime = math.min(current + step, job.target)
-                animation.direction = 1
-            else
-                nextTime = math.max(current - step, job.target)
-                animation.direction = -1
-            end
-
-            local ok, result = pcall(animatedObject.setAnimTime, animatedObject, nextTime, false)
-            if not ok then
-                debugLog("FORCED DRIVER setAnimTime ERROR object=%s: %s", tostring(animatedObject), tostring(result))
-                self.activeGateAnimations[animatedObject] = nil
-            else
-                animatedObject.isMoving = nextTime ~= job.target
-                animation.timeSend = nextTime
-                if animatedObject.raiseDirtyFlags ~= nil and animatedObject.animatedObjectDirtyFlag ~= nil then
-                    pcall(animatedObject.raiseDirtyFlags, animatedObject, animatedObject.animatedObjectDirtyFlag)
-                end
-
-                if now - (job.lastLog or 0) >= 250 then
-                    job.lastLog = now
-                    debugLog("FORCED DRIVER tick object=%s dt=%sms duration=%s current=%.4f next=%.4f target=%.1f direction=%s actualTime=%s", tostring(animatedObject), tostring(dt), tostring(duration), current, nextTime, job.target, tostring(animation.direction), tostring(animation.time))
-                end
-
-                if nextTime == job.target then
-                    animation.direction = 0
-                    animatedObject.isMoving = false
-                    animation.timeSend = nextTime
-                    if animatedObject.raiseDirtyFlags ~= nil and animatedObject.animatedObjectDirtyFlag ~= nil then
-                        pcall(animatedObject.raiseDirtyFlags, animatedObject, animatedObject.animatedObjectDirtyFlag)
-                    end
-                    debugLog("FORCED DRIVER complete object=%s finalTime=%s", tostring(animatedObject), tostring(animation.time))
-                    self.activeGateAnimations[animatedObject] = nil
-                end
-            end
-        end
-    end
-end
-
-
-function OpenTheGate:getAnimatedObjectNode(animatedObject, owner)
-    local candidates = {
-        animatedObject.triggerNode,
-        animatedObject.node,
-        animatedObject.rootNode,
-        animatedObject.saveIdNode,
-        animatedObject.controls ~= nil and animatedObject.controls.triggerNode or nil,
-        owner ~= nil and owner.rootNode or nil
-    }
-
-    if animatedObject.animation ~= nil and animatedObject.animation.parts ~= nil then
-        for _, part in ipairs(animatedObject.animation.parts) do
-            table.insert(candidates, part.node)
-        end
-    end
-
-    for _, node in ipairs(candidates) do
+local function firstValidNode(...)
+    for index = 1, select("#", ...) do
+        local node = select(index, ...)
         if validNode(node) then
             return node
         end
     end
+    return nil
+end
+
+function OpenTheGate:getAnimatedObjectNode(animatedObject, owner)
+    local controls = animatedObject.controls
+    local node = firstValidNode(
+        animatedObject.triggerNode,
+        controls ~= nil and controls.triggerNode or nil,
+        animatedObject.node,
+        animatedObject.rootNode,
+        animatedObject.saveIdNode,
+        owner ~= nil and owner.rootNode or nil
+    )
+    if node ~= nil then
+        return node
+    end
+
+    if animatedObject.animation ~= nil and animatedObject.animation.parts ~= nil then
+        for _, part in pairs(animatedObject.animation.parts) do
+            if part ~= nil and validNode(part.node) then
+                return part.node
+            end
+        end
+    end
+
     return nil
 end
 
@@ -292,12 +247,17 @@ function OpenTheGate:collectGates()
 
     -- Map-embedded AnimatedMapObjects. Different maps/game versions expose
     -- these through slightly different containers, so check all known ones.
-    local containers = {
-        mission.animatedMapObjects,
-        mission.animatedObjects,
-        mission.onCreateObjectSystem ~= nil and mission.onCreateObjectSystem.animatedObjects or nil,
-        mission.onCreateObjectSystem ~= nil and mission.onCreateObjectSystem.objects or nil
-    }
+    local containers = {}
+    if mission.animatedMapObjects ~= nil then table.insert(containers, mission.animatedMapObjects) end
+    if mission.animatedObjects ~= nil then table.insert(containers, mission.animatedObjects) end
+    if mission.onCreateObjectSystem ~= nil then
+        if mission.onCreateObjectSystem.animatedObjects ~= nil then
+            table.insert(containers, mission.onCreateObjectSystem.animatedObjects)
+        end
+        if mission.onCreateObjectSystem.objects ~= nil then
+            table.insert(containers, mission.onCreateObjectSystem.objects)
+        end
+    end
 
     for _, container in ipairs(containers) do
         if container ~= nil then
@@ -323,7 +283,7 @@ function OpenTheGate:canOperate(animatedObject)
 end
 
 function OpenTheGate:dumpGateInterface(animatedObject)
-    if animatedObject == nil then return end
+    if animatedObject == nil or not OpenTheGateUtil.isDebugEnabled("GATES") then return end
 
     local keys = {}
     for key, value in pairs(animatedObject) do

@@ -1,4 +1,7 @@
--- FS25_openTheGate
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
+
+-- FS25_OpenTheGate
 -- Client -> server request. The server performs the search and toggles gates.
 
 OpenTheGateEvent = {}
@@ -14,7 +17,7 @@ end
 function OpenTheGateEvent.new(vehicle, mode)
     local self = OpenTheGateEvent.emptyNew()
     self.vehicle = vehicle
-    self.mode = mode or 1
+    self.mode = mode or OpenTheGateConfig.MODE_NEAREST
     return self
 end
 
@@ -36,7 +39,7 @@ function OpenTheGateEvent:run(connection)
     debugLog("Event run connection=%s connectionIsServer=%s", tostring(connection), tostring(connection ~= nil and connection:getIsServer()))
     -- Requests are deliberately handled only by the server. AnimatedObject's
     -- own direction/event logic then synchronises the result to clients.
-    if not connection:getIsServer() and g_openTheGate ~= nil then
+    if connection ~= nil and not connection:getIsServer() and g_openTheGate ~= nil then
         g_openTheGate:handleRequest(self.vehicle, self.mode, connection)
     end
 end

@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
+
 -- Horn gesture detection and local controlled-vehicle polling.
 
 local function debugLog(fmt, ...) OpenTheGateUtil.debugLog("HORN", fmt, ...) end
@@ -141,7 +144,6 @@ end
 
 
 function OpenTheGate:update(dt)
-    self:updateForcedGateAnimations(dt)
     local now = getTimeMs()
 
     -- Poll the controlled vehicle as a fallback. This also tells us whether the
@@ -191,5 +193,3 @@ function OpenTheGate:update(dt)
 end
 
 
--- Vehicle-combination targeting uses the front-most and rear-most points
--- of the complete vehicle train rather than relying on the root node alone.

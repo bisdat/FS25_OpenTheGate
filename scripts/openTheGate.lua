@@ -1,4 +1,7 @@
--- FS25_openTheGate entry point.
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
+
+-- FS25_OpenTheGate entry point.
 -- This loader owns module ordering; modules extend the shared OpenTheGate class.
 
 local modDirectory = g_currentModDirectory or ""

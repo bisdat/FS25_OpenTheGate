@@ -1,4 +1,7 @@
--- FS25_openTheGate central configuration.
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
+
+-- FS25_OpenTheGate central configuration.
 -- Change only values in this file when tuning behaviour or diagnostics.
 
 OpenTheGateConfig = {
@@ -25,8 +28,6 @@ OpenTheGateConfig = {
     DEBUG_HORN = false,
     DEBUG_NETWORK = false,
     DEBUG_TARGETING = false,
-    DEBUG_VEHICLE = false,
     DEBUG_GATES = false,
-    DEBUG_PERFORMANCE = false,
     DEBUG_VERBOSE_GATE_SCAN = false,
 }

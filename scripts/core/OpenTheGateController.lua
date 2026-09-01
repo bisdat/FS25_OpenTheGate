@@ -1,3 +1,6 @@
+-- SPDX-License-Identifier: MPL-2.0
+-- Copyright (c) 2026 bisdat
+
 -- Server-side gate selection and request coordination.
 
 local function debugLog(fmt, ...) OpenTheGateUtil.debugLog("TARGETING", fmt, ...) end
@@ -32,6 +35,10 @@ function OpenTheGate:handleRequest(vehicle, mode, connection)
     debugLog("handleRequest BEGIN vehicle=%s mode=%s connection=%s server=%s", vehicleText(vehicle), tostring(mode), tostring(connection), boolText(g_server ~= nil))
     if g_server == nil then debugLog("handleRequest ABORT: g_server=nil") return end
     if vehicle == nil then debugLog("handleRequest ABORT: vehicle=nil") return end
+    if mode ~= OpenTheGateConfig.MODE_NEAREST and mode ~= OpenTheGateConfig.MODE_RADIUS then
+        debugLog("handleRequest ABORT: invalid mode=%s", tostring(mode))
+        return
+    end
     if vehicle.getIsSynchronized ~= nil and not vehicle:getIsSynchronized() then debugLog("handleRequest ABORT: vehicle not synchronized") return end
 
     local now = getTimeMs()
