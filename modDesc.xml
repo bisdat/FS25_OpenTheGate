@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="111">
+    <author>bisdat</author>
+    <version>1.0.0.0</version>
+
+    <title>
+        <en>Open The Gate</en>
+        <de>Tor Per Hupe Öffnen</de>
+        <fr>Ouvrir Le Portail Au Klaxon</fr>
+        <it>Apri Il Cancello Con Il Clacson</it>
+        <es>Abre La Puerta Con El Claxon</es>
+    </title>
+
+    <description>
+        <en><![CDATA[Use the normal vehicle horn to remotely operate nearby animated gates.
+
+- Two quick horn taps: toggle the nearest gate in the direction of travel; paired entrance gates open together.
+- Hold the horn for 2 seconds: toggle every gate within 20 metres.
+- Attached implements and trailers are included when calculating the front, rear and search distance.
+- Does not need accurate alignment or positioning.
+
+The ordinary horn sound still works normally.
+
+Inspired by the excellent "Honk To Open The Gates" mod by 50keda.
+
+Support:
+Report unsupported gates or doors:
+https://github.com/bisdat/FS25_OpenTheGate/issues]]></en>
+        <de><![CDATA[Verwende die normale Fahrzeughupe, um nahe gelegene animierte Tore aus der Ferne zu bedienen.
+
+- Zweimal kurz hupen: Schaltet das nächste Tor in Fahrtrichtung; zusammengehörige Doppeltore öffnen gemeinsam.
+- Die Hupe 2 Sekunden lang halten: Schaltet alle Tore im Umkreis von 20 Metern.
+- Anbaugeräte und Anhänger werden bei der Berechnung von Fahrzeugfront, Heck und Suchentfernung berücksichtigt.
+- Eine genaue Ausrichtung oder Positionierung ist nicht erforderlich.
+
+Die normale Hupe funktioniert weiterhin wie gewohnt.
+
+Inspiriert vom hervorragenden Mod „Honk To Open The Gates“ von 50keda.
+
+Support:
+Nicht unterstützte Tore oder Türen melden:
+https://github.com/bisdat/FS25_OpenTheGate/issues]]></de>
+        <fr><![CDATA[Utilisez le klaxon normal du véhicule pour commander à distance les portails animés à proximité.
+
+- Deux pressions rapides sur le klaxon : actionne le portail le plus proche dans le sens du déplacement ; les portails doubles associés s'ouvrent ensemble.
+- Maintenez le klaxon pendant 2 secondes : actionne tous les portails dans un rayon de 20 mètres.
+- Les outils attelés et les remorques sont pris en compte pour calculer l'avant, l'arrière et la distance de recherche.
+- Ne nécessite pas d'alignement ni de positionnement précis.
+
+Le klaxon normal continue de fonctionner normalement.
+
+Inspiré par l'excellent mod « Honk To Open The Gates » de 50keda.
+
+Assistance :
+Signalez les portails ou portes non pris en charge :
+https://github.com/bisdat/FS25_OpenTheGate/issues]]></fr>
+        <it><![CDATA[Usa il normale clacson del veicolo per azionare a distanza i cancelli animati nelle vicinanze.
+
+- Due brevi colpi di clacson: aziona il cancello più vicino nella direzione di marcia; i cancelli doppi abbinati si aprono insieme.
+- Tieni premuto il clacson per 2 secondi: aziona tutti i cancelli entro un raggio di 20 metri.
+- Attrezzi collegati e rimorchi vengono considerati nel calcolo della parte anteriore, posteriore e della distanza di ricerca.
+- Non richiede un allineamento o un posizionamento preciso.
+
+Il normale clacson continua a funzionare normalmente.
+
+Ispirato all'eccellente mod "Honk To Open The Gates" di 50keda.
+
+Supporto:
+Segnala cancelli o porte non supportati:
+https://github.com/bisdat/FS25_OpenTheGate/issues]]></it>
+        <es><![CDATA[Usa el claxon normal del vehículo para accionar a distancia las puertas animadas cercanas.
+
+- Dos pulsaciones rápidas del claxon: acciona la puerta más cercana en la dirección de marcha; las puertas dobles emparejadas se abren juntas.
+- Mantén pulsado el claxon durante 2 segundos: acciona todas las puertas en un radio de 20 metros.
+- Los aperos acoplados y los remolques se tienen en cuenta al calcular la parte delantera, trasera y la distancia de búsqueda.
+- No requiere una alineación ni una posición precisas.
+
+El claxon normal sigue funcionando con normalidad.
+
+Inspirado en el excelente mod "Honk To Open The Gates" de 50keda.
+
+Soporte:
+Informa sobre puertas o portones no compatibles:
+https://github.com/bisdat/FS25_OpenTheGate/issues]]></es>
+    </description>
+
+    <iconFilename>icon_openTheGate.dds</iconFilename>
+    <multiplayer supported="true" />
+    <extraSourceFiles>
+        <sourceFile filename="scripts/openTheGate.lua" />
+    </extraSourceFiles>
+</modDesc>
